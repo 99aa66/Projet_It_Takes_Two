@@ -10,11 +10,7 @@ UCustomGameViewport::UCustomGameViewport()
     // Resize SplitscreenInfo to fit our custom config
     SplitscreenInfo.SetNum(ECustomSplitScreenType::SplitTypeCount, false);
 
-    // Fill the custom config
-    SplitscreenInfo[ECustomSplitScreenType::TwoPlayer].PlayerData.Add(FPerPlayerSplitscreenData(0.5f, 1.00f, 0.00f, 0.00f)); //1
-    SplitscreenInfo[ECustomSplitScreenType::TwoPlayer].PlayerData.Add(FPerPlayerSplitscreenData(0.5f, 1.00f, 0.5f, 0.00f)); //2
 }
-
 void UCustomGameViewport::UpdateActiveSplitscreenType()
 {
     ECustomSplitScreenType::Type SplitType = ECustomSplitScreenType::None;
@@ -22,13 +18,44 @@ void UCustomGameViewport::UpdateActiveSplitscreenType()
 
     if (NumPlayers == 2)
     {
-        // If Player count is equal 3, select custom Splitscreen
+        // If Player count is equal 2, select custom Splitscreen
         ActiveSplitscreenType = static_cast<ESplitScreenType::Type>(ECustomSplitScreenType::TwoPlayer);
-       
+        // Fill the custom config
+        SplitscreenInfo[ECustomSplitScreenType::TwoPlayer].PlayerData.Add(FPerPlayerSplitscreenData(0.5f, 1.0f, 0.0f, 0.0f)); //1
+        SplitscreenInfo[ECustomSplitScreenType::TwoPlayer].PlayerData.Add(FPerPlayerSplitscreenData(0.5f, 1.0f, 0.5f, 0.0f)); //2
     }
     else
     {
         // Otherwise fallback to default behaviour
         Super::UpdateActiveSplitscreenType();
+    }
+}
+
+void UCustomGameViewport::ModifySplitscreen(ECustomSplitScreenType::Type NewSplitType)
+{
+    switch (NewSplitType)
+    {
+    case ECustomSplitScreenType::OnePlayer:
+    {
+        ActiveSplitscreenType = static_cast<ESplitScreenType::Type>(ECustomSplitScreenType::TwoPlayer);
+        SplitscreenInfo[ECustomSplitScreenType::TwoPlayer].PlayerData.Reset();
+        SplitscreenInfo[ECustomSplitScreenType::TwoPlayer].PlayerData.Add(FPerPlayerSplitscreenData(1.0f, 1.0f, 0.0f, 0.0f)); //1
+        SplitscreenInfo[ECustomSplitScreenType::TwoPlayer].PlayerData.Add(FPerPlayerSplitscreenData(0.0f, 0.0f, 0.5f, 0.0f)); //2
+    }
+    break;
+    case ECustomSplitScreenType::TwoPlayer:
+    {
+        ActiveSplitscreenType = static_cast<ESplitScreenType::Type>(ECustomSplitScreenType::TwoPlayer);
+        SplitscreenInfo[ECustomSplitScreenType::TwoPlayer].PlayerData.Reset();
+        SplitscreenInfo[ECustomSplitScreenType::TwoPlayer].PlayerData.Add(FPerPlayerSplitscreenData(0.5f, 1.0f, 0.0f, 0.0f)); //1
+        SplitscreenInfo[ECustomSplitScreenType::TwoPlayer].PlayerData.Add(FPerPlayerSplitscreenData(0.5f, 1.0f, 0.5f, 0.0f)); //2
+    }
+    break;
+    case ECustomSplitScreenType::None:
+    default:
+    {
+        Super::UpdateActiveSplitscreenType();
+    }
+    break;
     }
 }

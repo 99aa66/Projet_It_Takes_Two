@@ -17,6 +17,7 @@ namespace ECustomSplitScreenType
     {
         // 0 value required by UE
         None,
+        OnePlayer,
         // Custom Splitscreen, next value after last built-in splitscreen type
         TwoPlayer = ESplitScreenType::SplitTypeCount,
         SplitTypeCount
@@ -31,5 +32,6 @@ public:
     UCustomGameViewport();  // Constructor declaration
 
     virtual void UpdateActiveSplitscreenType() override;  // Method declaration
+    void ModifySplitscreen(ECustomSplitScreenType::Type NewSplitType);
 
  };
